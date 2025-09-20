@@ -1,0 +1,28 @@
+{
+    "name": "matheus/sistema-delivery",
+    "description": "Sistema de Delivery para o trabalho de POO",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Matheus Pereira",
+            "email": "matheus.p.soares242@gmail.com"
+        },
+        {
+            "name": "Felipe Vicente",
+            "email": "fevicente06@gmail.com"
+        },
+        {
+            "name": "Alessandro Junior da Silva",
+            "email": "junior189982512@gmail.com"
+        },
+        {
+            "name": "Caio Falzoni",
+            "email": "caiofalzoni9090@gmail.com"
+        }
+    ],
+    "require": {}
+}
