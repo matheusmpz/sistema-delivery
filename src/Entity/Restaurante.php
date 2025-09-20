@@ -40,6 +40,17 @@ class Restaurante {
             echo "- " . $produto->nome . " | R$ " . $produto->preco . "<br>";
         }
     }
+
+    public function getProdutoById(int $produtoId): ?Produto
+    {
+        foreach ($this->cardapio as $produto) {
+            if ($produto->getId() === $produtoId) {
+                return $produto;
+            }
+        }
+        return null;
+    }
+    
     public function getId(): int
     {
         return $this->id;

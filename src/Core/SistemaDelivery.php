@@ -332,7 +332,7 @@ class SistemaDelivery
             return;
         }
 
-        if (!$entregador->isDisponivel()) {
+        if (!$entregador->getdisponibilidade()) {
             echo "Entregador " . $entregador->getNome() . " não está disponível no momento.\n";
             return;
         }
