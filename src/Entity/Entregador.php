@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Entity;
-use App\Abstract\Pessoa;
+use App\Abstracts\Pessoa;
 use App\Entity\Pedido;
 
 Class Entregador extends Pessoa

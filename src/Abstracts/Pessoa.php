@@ -1,5 +1,5 @@
 <?php
-namespace App\Abstract;
+namespace App\Abstracts;
 
 abstract class Pessoa {
     protected int $id;
