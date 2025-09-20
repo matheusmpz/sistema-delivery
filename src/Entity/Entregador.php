@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Entity;
-
 use App\Abstract\Pessoa;
 use App\Entity\Pedido;
 
@@ -11,6 +10,7 @@ Class Entregador extends Pessoa
     private string $veiculo;
     public bool $disponibilidade;
     protected array $pedidosAtuais;
+
     public function __construct(string $cnh, string $veiculo, bool $disponibilidade, array $pedidosAtuais)
     {
         $this->cnh = $cnh;
@@ -18,6 +18,7 @@ Class Entregador extends Pessoa
         $this->disponibilidade = $disponibilidade;
         $this->pedidosAtuais = $pedidosAtuais;
     }
+
     public function exibirInformacoes(): void
     {
         echo "\n--- Informações do Entregador ---\n";
@@ -28,6 +29,7 @@ Class Entregador extends Pessoa
 
         echo "------------------------------\n";
     }
+
     public function aceitarPedido(Pedido $pedido): void
     {
         if ($this->disponibilidade){
@@ -40,6 +42,7 @@ Class Entregador extends Pessoa
             echo "Entregador não esta disponivel";
         }
     }
+
     public function finalizarEntrega(Pedido $pedido): void
     {
         $key = array_search($pedido, $this->pedidosAtuais);
@@ -54,31 +57,37 @@ Class Entregador extends Pessoa
             echo "Pedido não encontrado na lista";
         }
     }
+
     public function getcnh(): string
     {
         return $this->cnh;
     }
+
     public function getVeiculo(): string{
         return $this->veiculo;
     }
-    public function setVeiculo(): string{
-        return $this->veiculo;
+
+    public function setVeiculo(string $veiculo): void {
+        $this->veiculo = $veiculo;
     }
+
     public function getdisponibilidade(): string
     {
         return $this->disponibilidade;
     }
-    public function setdisponibilidade():bool
+
+    public function setdisponibilidade(bool $disponibilidade):void
     {
-        return $this->disponibilidade;
+        $this->disponibilidade = $disponibilidade;    
     }
+
     public function getpedidosAtuais(): array
     {
         return $this->pedidosAtuais;
     }
+
     public function setpedidosAtuais(): array
     {
         return $this->pedidosAtuais;
-
     }
 }
