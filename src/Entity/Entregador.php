@@ -11,13 +11,13 @@ Class Entregador extends Pessoa
     public bool $disponibilidade;
     protected array $pedidosAtuais;
 
-    public function __construct(string $cnh, string $veiculo, bool $disponibilidade, array $pedidosAtuais,string $telefone,int $id, string $nome, string $email)
+    public function __construct(string $cnh, string $veiculo,string $telefone,int $id, string $nome, string $email)
     {
         parent::__construct($id, $nome, $email, $telefone);
         $this->cnh = $cnh;
         $this->veiculo = $veiculo;
-        $this->disponibilidade = $disponibilidade;
-        $this->pedidosAtuais = $pedidosAtuais;
+        $this->disponibilidade = true;
+        $this->pedidosAtuais = [];
     }
 
     public function exibirInformacoes(): void
