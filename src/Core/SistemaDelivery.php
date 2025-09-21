@@ -81,6 +81,7 @@ class SistemaDelivery
             echo "8. Listar Entregadores\n";
             echo "9. Listar Pedidos\n";
             echo "10. Atribuir Entregador a um Pedido\n";
+            echo "11. Finalizar Entrega do Pedido\n";
             echo "0. Sair\n";
             $opcao = $this->lerInputInt("Escolha uma opção: ");
 
@@ -115,6 +116,8 @@ class SistemaDelivery
                 case 10:
                     $this->atribuirEntregadorAoPedido();
                     break;
+                case 11:
+                    $this->finalizarEntrega();
                 case 0:
                     echo "Saindo do sistema. Até mais!\n";
                     return;

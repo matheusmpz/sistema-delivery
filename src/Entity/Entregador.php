@@ -11,7 +11,7 @@ Class Entregador extends Pessoa
     public bool $disponibilidade;
     protected array $pedidosAtuais;
 
-    public function __construct(string $cnh, string $veiculo,string $telefone,int $id, string $nome, string $email)
+    public function __construct(int $id, string $nome, string $email, string $telefone, string $cnh, string $veiculo)
     {
         parent::__construct($id, $nome, $email, $telefone);
         $this->cnh = $cnh;
@@ -25,9 +25,18 @@ Class Entregador extends Pessoa
         echo "\n--- Informações do Entregador ---\n";
         echo "CNH: " . $this->getcnh() . "\n";
         echo "Veiculo: " . $this->getVeiculo() . "\n";
-        echo "Disponibilidade: " . $this->getdisponibilidade() . "\n";
-        echo "Pedidos Atuais: " . $this->getpedidosAtuais() . "\n";
-
+        echo "Disponibilidade: " . ($this->getdisponibilidade() ? 'Disponível' : 'Ocupado') . "\n";
+        echo "Pedidos Atuais: ";
+        $pedidos = $this->getpedidosAtuais();
+        
+        if (empty($pedidos)) {
+            echo "Nenhum pedido atual.";
+        } else {
+            foreach ($pedidos as $pedido) {
+                echo "Pedido #" . $pedido->getId() . " ";
+            }
+        }
+        echo "\n";
         echo "------------------------------\n";
     }
 
@@ -37,10 +46,10 @@ Class Entregador extends Pessoa
             $this->pedidosAtuais[] = $pedido; 
             $pedido->atualizarStatus("Pedido a caminho");
             $this->disponibilidade = false; 
-            echo "Entregador aceitou o pedido";
+            echo "Entregador aceitou o pedido ";
         }
         else{
-            echo "Entregador não esta disponivel";
+            echo "Entregador não esta disponivel ";
         }
     }
 
@@ -72,7 +81,7 @@ Class Entregador extends Pessoa
         $this->veiculo = $veiculo;
     }
 
-    public function getdisponibilidade(): string
+    public function getdisponibilidade(): bool
     {
         return $this->disponibilidade;
     }
@@ -87,8 +96,8 @@ Class Entregador extends Pessoa
         return $this->pedidosAtuais;
     }
 
-    public function setpedidosAtuais(): array
+    public function setpedidosAtuais(array $pedidos): void
     {
-        return $this->pedidosAtuais;
+        $this->pedidosAtuais = $pedidos;
     }
 }

@@ -4,10 +4,10 @@ namespace App\Abstracts;
 
 abstract class Item
 {
-    protected int $id;
-    protected string $nome;
-    protected string $descricao;
-    protected float $preco;
+    public int $id;
+    public string $nome;
+    public string $descricao;
+    public float $preco;
 
     public function __construct(int $id, string $nome, string $descricao, float $preco)
     {

@@ -11,9 +11,6 @@ class Pedido
     private int $id;
     private Cliente $cliente;
     private Restaurante $restaurante;
-    /**
-     * @var ItemPedido[]
-     */
     private array $itens;
     private string $status;
     private float $total;
