@@ -24,7 +24,7 @@ class Pedido
         $this->cliente = $cliente;
         $this->restaurante = $restaurante;
         $this->itens = [];
-        $this->status = 'pendente'; // Status inicial do pedido
+        $this->status = 'pendente';
         $this->total = 0.0;
     }
 
@@ -76,7 +76,6 @@ class Pedido
         echo "----------------------------------\n";
     }
 
-    // Getters
     public function getId(): int
     {
         return $this->id;
@@ -92,9 +91,6 @@ class Pedido
         return $this->restaurante;
     }
 
-    /**
-     * @return ItemPedido[]
-     */
     public function getItens(): array
     {
         return $this->itens;

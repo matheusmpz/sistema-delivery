@@ -19,7 +19,7 @@ abstract class Item
 
     abstract public function exibirDetalhes(): void;
 
-    protected function formatarPreco(): string
+    public function formatarPreco(): string
     {
         return "R$ " . number_format($this->preco, 2, ",", ".");
     }
