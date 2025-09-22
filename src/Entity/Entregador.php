@@ -62,9 +62,9 @@ Class Entregador extends Pessoa
             if (empty($this->pedidosAtuais)) {
                 $this->disponibilidade = true; 
             }
-            echo "Entregador Finalização";
+            echo "Entregador Finalização \n";
         } else {
-            echo "Pedido não encontrado na lista";
+            echo "Pedido não encontrado na lista \n";
         }
     }
 

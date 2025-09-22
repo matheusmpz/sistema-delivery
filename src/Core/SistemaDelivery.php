@@ -32,7 +32,7 @@ class SistemaDelivery
 
     public function iniciar(): void
     {
-        echo "Bem-vindo ao Sistema de Delivery CLI!\n";
+        echo "Bem-vindo ao Sistema de Delivery!\n";
         $this->menuPrincipal();
     }
 
@@ -118,6 +118,7 @@ class SistemaDelivery
                     break;
                 case 11:
                     $this->finalizarEntrega();
+                    break;
                 case 0:
                     echo "Saindo do sistema. Até mais!\n";
                     return;
@@ -342,6 +343,48 @@ class SistemaDelivery
 
         $entregador->aceitarPedido($pedido);
         echo "Entregador " . $entregador->getNome() . " atribuído ao pedido #" . $pedido->getId() . ".\n";
+    }
+
+    private function finalizarEntrega(): void 
+    {
+        echo "\n--- Finalizar Entrega ---\n";
+        if (empty($this->pedidos)) {
+            echo "Nenhum pedido para finalizar.\n";
+            return;
+        }
+
+        $this->listarPedidos();
+        $pedidoId = $this->lerInputInt("Digite o ID do pedido para finalizar: ");
+        $pedido = $this->findPedidoById($pedidoId);
+
+        if (!$pedido) {
+            echo "Pedido não encontrado.\n";
+            return;
+        }
+
+        if ($pedido->getStatus() !== 'Pedido a caminho') {
+            echo "O pedido #" . $pedido->getId() . " não está em entrega (Status atual: " . $pedido->getStatus() . ").\n";
+            return;
+        }
+
+        $entregadorResponsavel = null;
+        foreach ($this->entregadores as $entregador) {
+            foreach ($entregador->getpedidosAtuais() as $pedidoAtual) {
+                if ($pedidoAtual->getId() === $pedido->getId()) {
+                    $entregadorResponsavel = $entregador;
+                    break 2;
+                }
+            }
+        }
+
+        if (!$entregadorResponsavel) {
+            echo "Nenhum entregador foi encontrado para este pedido.\n";
+            return;
+        }
+
+        $entregadorResponsavel->finalizarEntrega($pedido);
+
+        echo "Pedido #" . $pedido->getId() . " entregue com sucesso!\n";
     }
 
     private function findClienteById(int $id): ?Cliente

@@ -34,11 +34,13 @@ class Restaurante {
         echo "Produto não encontrado!";
     }     
 
-    function exibirCardapio() {
-        echo "Cardápio do restaurante: " . $this->nome . "<br>";
+    public function exibirCardapio(): void
+    {
+        echo "\n--- Cardápio do Restaurante: " . $this->getNome() . " ---\n";
         foreach ($this->cardapio as $produto) {
-            echo "- " . $produto->nome . " | R$ " . $produto->preco . "<br>";
+            echo "ID: " . $produto->getId() . " | " . $produto->getNome() . " | R$ " . $produto->getPreco() . "\n";
         }
+        echo "-----------------------------------------\n";
     }
 
     public function getProdutoById(int $produtoId): ?Produto
