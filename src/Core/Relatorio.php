@@ -17,7 +17,7 @@ class Relatorio
    public function gerarRelatorioRestaurante():array
    {
       $resultado = [];
-      foreach($this->$pedidos as $pedido)
+      foreach($this->pedidos as $pedido)
       {
          $restaurante = $pedido->getRestaurante()->getNome();
          $valor = $pedido->getTotal();
