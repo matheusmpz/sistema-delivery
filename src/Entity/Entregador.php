@@ -58,7 +58,6 @@ class Entregador extends Pessoa
         $key = array_search($pedido, $this->pedidosAtuais, true);
         if ($key !== false) {
             unset($this->pedidosAtuais[$key]);
-            $pedido->setEntregador(null);
             $pedido->atualizarStatus('Pedido entregue');
             if (empty($this->pedidosAtuais)) {
                 $this->disponibilidade = true;
