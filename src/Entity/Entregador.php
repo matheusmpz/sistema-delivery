@@ -4,7 +4,7 @@ namespace App\Entity;
 use App\Abstracts\Pessoa;
 use App\Entity\Pedido;
 
-Class Entregador extends Pessoa
+class Entregador extends Pessoa
 {
     private string $cnh;
     private string $veiculo;
@@ -28,7 +28,7 @@ Class Entregador extends Pessoa
         echo "Disponibilidade: " . ($this->getdisponibilidade() ? 'Disponível' : 'Ocupado') . "\n";
         echo "Pedidos Atuais: ";
         $pedidos = $this->getpedidosAtuais();
-        
+
         if (empty($pedidos)) {
             echo "Nenhum pedido atual.";
         } else {
@@ -42,29 +42,30 @@ Class Entregador extends Pessoa
 
     public function aceitarPedido(Pedido $pedido): void
     {
-        if ($this->disponibilidade){
-            $this->pedidosAtuais[] = $pedido; 
+        if ($this->disponibilidade) {
+            $this->pedidosAtuais[] = $pedido;
+            $pedido->setEntregador($this);
             $pedido->atualizarStatus("Pedido a caminho");
-            $this->disponibilidade = false; 
-            echo "Entregador aceitou o pedido ";
-        }
-        else{
-            echo "Entregador não esta disponivel ";
+            $this->disponibilidade = false;
+            echo "Entregador aceitou o pedido #" . $pedido->getId() . "\n";
+        } else {
+            echo "Entregador não está disponível.\n";
         }
     }
 
     public function finalizarEntrega(Pedido $pedido): void
     {
-        $key = array_search($pedido, $this->pedidosAtuais);
+        $key = array_search($pedido, $this->pedidosAtuais, true);
         if ($key !== false) {
             unset($this->pedidosAtuais[$key]);
+            $pedido->setEntregador(null);
             $pedido->atualizarStatus('Pedido entregue');
             if (empty($this->pedidosAtuais)) {
-                $this->disponibilidade = true; 
+                $this->disponibilidade = true;
             }
-            echo "Entregador Finalização \n";
+            echo "Entregador finalizou entrega do pedido #" . $pedido->getId() . "\n";
         } else {
-            echo "Pedido não encontrado na lista \n";
+            echo "Pedido não encontrado na lista.\n";
         }
     }
 
@@ -73,11 +74,13 @@ Class Entregador extends Pessoa
         return $this->cnh;
     }
 
-    public function getVeiculo(): string{
+    public function getVeiculo(): string
+    {
         return $this->veiculo;
     }
 
-    public function setVeiculo(string $veiculo): void {
+    public function setVeiculo(string $veiculo): void
+    {
         $this->veiculo = $veiculo;
     }
 
@@ -86,9 +89,9 @@ Class Entregador extends Pessoa
         return $this->disponibilidade;
     }
 
-    public function setdisponibilidade(bool $disponibilidade):void
+    public function setdisponibilidade(bool $disponibilidade): void
     {
-        $this->disponibilidade = $disponibilidade;    
+        $this->disponibilidade = $disponibilidade;
     }
 
     public function getpedidosAtuais(): array

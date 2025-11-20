@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Cliente;
 use App\Entity\Restaurante;
 use App\Entity\ItemPedido;
+use App\Entity\Entregador;
 
 class Pedido
 {
@@ -14,6 +15,7 @@ class Pedido
     private array $itens;
     private string $status;
     private float $total;
+    private ?Entregador $entregador = null;
 
     public function __construct(int $id, Cliente $cliente, Restaurante $restaurante)
     {
@@ -23,13 +25,14 @@ class Pedido
         $this->itens = [];
         $this->status = 'pendente';
         $this->total = 0.0;
+        $this->entregador = null;
     }
 
     public function adicionarItem(ItemPedido $itemPedido): void
     {
         $this->itens[] = $itemPedido;
         $this->calcularTotal();
-        echo "Item \'" . $itemPedido->getProduto()->getNome() . "\' adicionado ao pedido #" . $this->id . ".\n";
+        echo "Item '" . $itemPedido->getProduto()->getNome() . "' adicionado ao pedido #" . $this->id . ".\n";
     }
 
     public function removerItem(int $produtoId): void
@@ -38,7 +41,7 @@ class Pedido
             if ($itemPedido->getProduto()->getId() === $produtoId) {
                 unset($this->itens[$key]);
                 $this->calcularTotal();
-                echo "Item \'" . $itemPedido->getProduto()->getNome() . "\' removido do pedido #" . $this->id . ".\n";
+                echo "Item '" . $itemPedido->getProduto()->getNome() . "' removido do pedido #" . $this->id . ".\n";
                 return;
             }
         }
@@ -47,7 +50,7 @@ class Pedido
 
     public function calcularTotal(): void
     {
-        $this->total = 0;
+        $this->total = 0.0;
         foreach ($this->itens as $itemPedido) {
             $this->total += $itemPedido->getSubtotal();
         }
@@ -65,6 +68,7 @@ class Pedido
         echo "Cliente: " . $this->cliente->getNome() . "\n";
         echo "Restaurante: " . $this->restaurante->getNome() . "\n";
         echo "Status: " . $this->status . "\n";
+        echo "Entregador: " . ($this->entregador ? $this->entregador->getNome() : '—') . "\n";
         echo "Itens:\n";
         foreach ($this->itens as $item) {
             echo "  - " . $item->getQuantidade() . "x " . $item->getProduto()->getNome() . " (" . $item->getProduto()->formatarPreco() . " cada) = R$ " . number_format($item->getSubtotal(), 2, ",", ".") . "\n";
@@ -101,5 +105,15 @@ class Pedido
     public function getTotal(): float
     {
         return $this->total;
+    }
+
+    public function getEntregador(): ?Entregador
+    {
+        return $this->entregador;
+    }
+
+    public function setEntregador(?Entregador $entregador): void
+    {
+        $this->entregador = $entregador;
     }
 }
