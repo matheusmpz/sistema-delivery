@@ -1,6 +1,10 @@
 <?php
 namespace App\Abstracts;
 
+/**
+ * Classe Abstrata que define propriedades e comportamentos básicos de uma Pessoa
+ * (Cliente ou Entregador), garantindo reuso de código (Herança) e Polimorfismo.
+ */
 abstract class Pessoa {
     protected int $id;
     protected string $nome;
@@ -38,8 +42,27 @@ abstract class Pessoa {
     }
 
     public function getTelefone(): string
-
     {
         return $this->telefone;
+    }
+
+
+    public function setNome(string $nome): void
+    {
+        $this->nome = $nome;
+    }
+
+    public function setEmail(string $email): void
+    {
+        if (!$this->validarEmail($email)) {
+            echo "ERRO: Email '{$email}' é inválido e não foi atualizado.\n";
+            return;
+        }
+        $this->email = $email;
+    }
+
+    public function setTelefone(string $telefone): void
+    {
+        $this->telefone = $telefone;
     }
 }

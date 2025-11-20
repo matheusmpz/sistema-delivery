@@ -1,21 +1,37 @@
 <?php
-  namespace App\Entity;
 
-  use App\Abstracts\Pessoa;
-  use App\Entity\Pedido;
+namespace App\Entity;
 
-  Class Cliente extends Pessoa
-  {
+use App\Abstracts\Pessoa;
+use App\Entity\Pedido;
+
+class Cliente extends Pessoa
+{
     private string $endereco;
     private array $historicoPedidos;
 
-     public function __construct(int $id, string $nome, string $email, string $telefone, string $endereco)
-     {
+    public function __construct(int $id, string $nome, string $email, string $telefone, string $endereco)
+    {
         parent::__construct($id, $nome, $email, $telefone);
         $this->endereco = $endereco;
         $this->historicoPedidos = [];
-     }
-    public function exibirInformacoes():void
+    }
+    
+    public function getEndereco(): string
+    {
+        return $this->endereco;
+    }
+    public function getHistoricoPedidos(): array
+    {
+        return $this->historicoPedidos;
+    }
+
+    public function setEndereco(string $endereco): void
+    {
+        $this->endereco = $endereco;
+    }
+
+    public function exibirInformacoes(): void
     {
         echo "\n--- Informações do Cliente ---\n";
         echo "ID: " . $this->getId() . "\n";
@@ -24,32 +40,23 @@
         echo "Telefone: " . $this->getTelefone() . "\n";
         echo "Endereço: " . $this->endereco . "\n";
         echo "------------------------------\n";
-        
     }
 
-    public function fazerPedido($pedido):string
+    public function fazerPedido(Pedido $pedido): string
     {
         $this->historicoPedidos[] = $pedido;
         return "Pedido registrado";
     }
 
-    public function verHistoricoPedidos():void
+    public function verHistoricoPedidos(): void
     {
         if (empty($this->historicoPedidos)) {
-            echo "Não ha pedidos no historico";
+            echo "Não há pedidos no histórico\n";
             return;
         }
+        echo "\n--- Histórico de Pedidos de " . $this->getNome() . " ---\n";
         foreach ($this->historicoPedidos as $pedido) {
             $pedido->exibirDetalhesPedido();
         }
-    }
-
-    public function getEndereco():string
-    {
-        return $this->endereco;
-    }
-    public function gethistoricoPedidos():array
-    {
-        return $this->historicoPedidos;
     }
 }

@@ -8,8 +8,8 @@ class Entregador extends Pessoa
 {
     private string $cnh;
     private string $veiculo;
-    public bool $disponibilidade;
-    protected array $pedidosAtuais;
+    private bool $disponibilidade;
+    private array $pedidosAtuais;
 
     public function __construct(int $id, string $nome, string $email, string $telefone, string $cnh, string $veiculo)
     {
@@ -20,23 +20,37 @@ class Entregador extends Pessoa
         $this->pedidosAtuais = [];
     }
 
+    public function setCnh(string $cnh): void
+    {
+        $this->cnh = $cnh;
+    }
+    
+
+    public function setVeiculo(string $veiculo): void
+    {
+        $this->veiculo = $veiculo;
+    }
+
+    public function setDisponibilidade(bool $disponibilidade): void
+    {
+        $this->disponibilidade = $disponibilidade;
+    }
+    
     public function exibirInformacoes(): void
     {
         echo "\n--- Informações do Entregador ---\n";
-        echo "CNH: " . $this->getcnh() . "\n";
+        echo "ID: " . $this->getId() . "\n";
+        echo "Nome: " . $this->getNome() . "\n";
+        echo "Email: " . $this->getEmail() . "\n";
+        echo "Telefone: " . $this->getTelefone() . "\n";
+        echo "CNH: " . $this->getCnh() . "\n";
         echo "Veiculo: " . $this->getVeiculo() . "\n";
-        echo "Disponibilidade: " . ($this->getdisponibilidade() ? 'Disponível' : 'Ocupado') . "\n";
-        echo "Pedidos Atuais: ";
-        $pedidos = $this->getpedidosAtuais();
-
-        if (empty($pedidos)) {
-            echo "Nenhum pedido atual.";
-        } else {
-            foreach ($pedidos as $pedido) {
-                echo "Pedido #" . $pedido->getId() . " ";
-            }
+        echo "Disponibilidade: " . ($this->getDisponibilidade() ? 'Disponível' : 'Ocupado') . "\n";
+        echo "Pedidos Atuais (" . count($this->pedidosAtuais) . "):\n";
+        
+        foreach ($this->pedidosAtuais as $pedido) {
+            echo "  - Pedido #" . $pedido->getId() . " (Restaurante: " . $pedido->getRestaurante()->getNome() . ")\n";
         }
-        echo "\n";
         echo "------------------------------\n";
     }
 
@@ -45,32 +59,51 @@ class Entregador extends Pessoa
         if ($this->disponibilidade) {
             $this->pedidosAtuais[] = $pedido;
             $pedido->setEntregador($this);
-            $pedido->atualizarStatus("Pedido a caminho");
-            $this->disponibilidade = false;
-            echo "Entregador aceitou o pedido #" . $pedido->getId() . "\n";
+            $pedido->atualizarStatus("Pedido a caminho"); 
+            
+            $this->disponibilidade = false; 
+            
+            echo "Entregador '{$this->getNome()}' aceitou o pedido #{$pedido->getId()}.\n";
         } else {
-            echo "Entregador não está disponível.\n";
+            echo "Entregador '{$this->getNome()}' não está disponível para novos pedidos.\n";
         }
     }
 
     public function finalizarEntrega(Pedido $pedido): void
     {
-        $key = array_search($pedido, $this->pedidosAtuais, true);
-        if ($key !== false) {
-            unset($this->pedidosAtuais[$key]);
+        $keyToRemove = null;
+        foreach ($this->pedidosAtuais as $key => $pedidoAtual) {
+            if ($pedidoAtual->getId() === $pedido->getId()) {
+                $keyToRemove = $key;
+                break;
+            }
+        }
+
+        if ($keyToRemove !== null) {
+            unset($this->pedidosAtuais[$keyToRemove]);
+            
+            $this->pedidosAtuais = array_values($this->pedidosAtuais);
+
             $pedido->atualizarStatus('Pedido entregue');
+            
             if (empty($this->pedidosAtuais)) {
                 $this->disponibilidade = true;
             }
-            echo "Entregador finalizou entrega do pedido #" . $pedido->getId() . "\n";
+            echo "Entregador '{$this->getNome()}' finalizou a entrega do pedido #{$pedido->getId()}. Status: Disponível.\n";
         } else {
-            echo "Pedido não encontrado na lista.\n";
+            echo "ERRO: Pedido #{$pedido->getId()} não encontrado na lista atual do entregador '{$this->getNome()}'.\n";
         }
     }
 
-    public function getcnh(): string
+
+    public function getCnh(): string
     {
         return $this->cnh;
+    }
+
+    public function getDisponibilidade(): bool
+    {
+        return $this->disponibilidade;
     }
 
     public function getVeiculo(): string
@@ -78,28 +111,8 @@ class Entregador extends Pessoa
         return $this->veiculo;
     }
 
-    public function setVeiculo(string $veiculo): void
-    {
-        $this->veiculo = $veiculo;
-    }
-
-    public function getdisponibilidade(): bool
-    {
-        return $this->disponibilidade;
-    }
-
-    public function setdisponibilidade(bool $disponibilidade): void
-    {
-        $this->disponibilidade = $disponibilidade;
-    }
-
-    public function getpedidosAtuais(): array
+    public function getPedidosAtuais(): array
     {
         return $this->pedidosAtuais;
-    }
-
-    public function setpedidosAtuais(array $pedidos): void
-    {
-        $this->pedidosAtuais = $pedidos;
     }
 }

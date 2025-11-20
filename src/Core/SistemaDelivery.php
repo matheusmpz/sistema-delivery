@@ -128,54 +128,57 @@ class SistemaDelivery
             echo "11. Finalizar Entrega do Pedido\n";
             echo "12. Relatório de Restaurantes\n";
             echo "13. Relatório de Entregadores\n";
+            echo "14. Menu de Edição e Exclusão\n";
             echo "0. Sair\n";
             $opcao = ConsoleInput::lerInputInt("Escolha uma opção: ");
 
             switch ($opcao) {
-                case 1:
-                    $this->cadastrarCliente();
-                    break;
-                case 2:
-                    $this->cadastrarRestaurante();
-                    break;
-                case 3:
-                    $this->cadastrarEntregador();
-                    break;
-                case 4:
-                    $this->adicionarProdutoAoRestaurante();
-                    break;
-                case 5:
-                    $this->fazerPedidoCLI();
-                    break;
-                case 6:
-                    $this->listarClientes();
-                    break;
-                case 7:
-                    $this->listarRestaurantes();
-                    break;
-                case 8:
-                    $this->listarEntregadores();
-                    break;
-                case 9:
-                    $this->listarPedidos();
-                    break;
-                case 10:
-                    $this->atribuirEntregadorAoPedido();
-                    break;
-                case 11:
-                    $this->finalizarEntrega();
-                    break;
-                case 12:
-                    $this->relatorioRestaurantes();
-                    break;
-                case 13:
-                    $this->relatorioEntregadores();
-                    break;
+                case 1: $this->cadastrarCliente(); break;
+                case 2: $this->cadastrarRestaurante(); break;
+                case 3: $this->cadastrarEntregador(); break;
+                case 4: $this->adicionarProdutoAoRestaurante(); break;
+                case 5: $this->fazerPedidoCLI(); break;
+                case 6: $this->listarClientes(); break;
+                case 7: $this->listarRestaurantes(); break;
+                case 8: $this->listarEntregadores(); break;
+                case 9: $this->listarPedidos(); break;
+                case 10: $this->atribuirEntregadorAoPedido(); break;
+                case 11: $this->finalizarEntrega(); break;
+                case 12: $this->relatorioRestaurantes(); break;
+                case 13: $this->relatorioEntregadores(); break;
+                case 14: $this->menuEdicaoExclusao(); break;
                 case 0:
                     echo "Saindo do sistema. Até mais!\n";
                     return;
                 default:
                     echo "Opção inválida. Tente novamente.\n";
+            }
+        }
+    }
+
+    private function menuEdicaoExclusao(): void
+    {
+        while (true) {
+            echo "\n--- MENU DE EDIÇÃO E EXCLUSÃO ---\n";
+            echo "1. Editar Cliente\n";
+            echo "2. Excluir Cliente\n";
+            echo "3. Editar Restaurante\n";
+            echo "4. Excluir Restaurante\n";
+            echo "5. Editar Entregador\n";
+            echo "6. Excluir Entregador\n";
+            echo "0. Voltar ao Menu Principal\n";
+            
+            $opcao = ConsoleInput::lerInputInt("Escolha a operação: ");
+
+            switch ($opcao) {
+                case 1: $this->editarCliente(); break;
+                case 2: $this->excluirCliente(); break;
+                case 3: $this->editarRestaurante(); break;
+                case 4: $this->excluirRestaurante(); break;
+                case 5: $this->editarEntregador(); break;
+                case 6: $this->excluirEntregador(); break;
+                case 0: return;
+                default: echo "Opção inválida. Tente novamente.\n";
             }
         }
     }
@@ -189,7 +192,7 @@ class SistemaDelivery
         $endereco = ConsoleInput::lerInputTexto("Endereço do Cliente: ");
 
         $cliente = new Cliente($this->nextClienteId++, $nome, $email, $telefone, $endereco);
-        $this->clientes[] = $cliente;
+        $this->clientes[$cliente->getId()] = $cliente;
         echo "Cliente '" . $cliente->getNome() . "' cadastrado com sucesso! ID: " . $cliente->getId() . "\n";
     }
 
@@ -201,7 +204,7 @@ class SistemaDelivery
         $telefone = ConsoleInput::lerInputTelefone("Telefone do Restaurante: ");
 
         $restaurante = new Restaurante($this->nextRestauranteId++, $nome, $endereco, $telefone);
-        $this->restaurantes[] = $restaurante;
+        $this->restaurantes[$restaurante->getId()] = $restaurante;
         echo "Restaurante '" . $restaurante->getNome() . "' cadastrado com sucesso! ID: " . $restaurante->getId() . "\n";
     }
 
@@ -216,7 +219,7 @@ class SistemaDelivery
         $veiculo = ConsoleInput::lerInputVeiculo();
 
         $entregador = new Entregador($this->nextEntregadorId++, $nome, $email, $telefone, $cnh, $veiculo);
-        $this->entregadores[] = $entregador;
+        $this->entregadores[$entregador->getId()] = $entregador;
         echo "Entregador '" . $entregador->getNome() . "' cadastrado com sucesso! ID: " . $entregador->getId() . "\n";
     }
 
@@ -318,7 +321,7 @@ class SistemaDelivery
 
         $entregadorResponsavel = null;
         foreach ($this->entregadores as $entregador) {
-            foreach ($entregador->getpedidosAtuais() as $pedidoAtual) {
+            foreach ($entregador->getPedidosAtuais() as $pedidoAtual) {
                 if ($pedidoAtual->getId() === $pedido->getId()) {
                     $entregadorResponsavel = $entregador;
                     break 2;
@@ -419,34 +422,140 @@ class SistemaDelivery
         }
     }
 
+
+    private function editarCliente(): void
+    {
+        $cliente = $this->buscarClienteInterativo();
+        if (!$cliente) return;
+
+        echo "\n--- EDITANDO CLIENTE #" . $cliente->getId() . " (" . $cliente->getNome() . ") ---\n";
+        
+        $novoNome = readline("Novo nome (enter para manter '" . $cliente->getNome() . "'): ");
+        if (!empty($novoNome)) $cliente->setNome($novoNome);
+
+        $novoEmail = readline("Novo email (enter para manter '" . $cliente->getEmail() . "'): ");
+        if (!empty($novoEmail)) $cliente->setEmail($novoEmail);
+
+        $novoTelefone = readline("Novo telefone (enter para manter '" . $cliente->getTelefone() . "'): ");
+        if (!empty($novoTelefone)) $cliente->setTelefone($novoTelefone);
+        
+        $novoEndereco = readline("Novo endereço (enter para manter '" . $cliente->getEndereco() . "'): ");
+        if (!empty($novoEndereco)) $cliente->setEndereco($novoEndereco);
+
+        echo "Cliente atualizado com sucesso!\n";
+    }
+
+    private function editarRestaurante(): void
+    {
+        $restaurante = $this->buscarRestauranteInterativo();
+        if (!$restaurante) return;
+
+        echo "\n--- EDITANDO RESTAURANTE #" . $restaurante->getId() . " (" . $restaurante->getNome() . ") ---\n";
+        
+        $novoNome = readline("Novo nome (enter para manter '" . $restaurante->getNome() . "'): ");
+        if (!empty($novoNome)) $restaurante->setNome($novoNome);
+
+        $novoEndereco = readline("Novo endereço (enter para manter '" . $restaurante->getEndereco() . "'): ");
+        if (!empty($novoEndereco)) $restaurante->setEndereco($novoEndereco);
+
+        $novoTelefone = readline("Novo telefone (enter para manter '" . $restaurante->getTelefone() . "'): ");
+        if (!empty($novoTelefone)) $restaurante->setTelefone($novoTelefone);
+
+        echo "Restaurante atualizado com sucesso!\n";
+    }
+
+    private function editarEntregador(): void
+    {
+        $entregador = $this->buscarEntregadorInterativo();
+        if (!$entregador) return;
+
+        echo "\n--- EDITANDO ENTREGADOR #" . $entregador->getId() . " (" . $entregador->getNome() . ") ---\n";
+        
+        $novoNome = readline("Novo nome (enter para manter '" . $entregador->getNome() . "'): ");
+        if (!empty($novoNome)) $entregador->setNome($novoNome);
+
+        $novoEmail = readline("Novo email (enter para manter '" . $entregador->getEmail() . "'): ");
+        if (!empty($novoEmail)) $entregador->setEmail($novoEmail);
+
+        $novoTelefone = readline("Novo telefone (enter para manter '" . $entregador->getTelefone() . "'): ");
+        if (!empty($novoTelefone)) $entregador->setTelefone($novoTelefone);
+
+        $novaCnh = readline("Nova CNH (enter para manter '" . $entregador->getCnh() . "'): ");
+        if (!empty($novaCnh)) $entregador->setCnh($novaCnh);
+        
+        echo "Deseja alterar o veículo? (s/n): ";
+        $alterarVeiculo = trim(readline());
+        if (strtolower($alterarVeiculo) === 's') {
+            $novoVeiculo = ConsoleInput::lerInputVeiculo();
+            $entregador->setVeiculo($novoVeiculo);
+        }
+
+        echo "Entregador atualizado com sucesso!\n";
+    }
+
+
+    private function excluirCliente(): void
+    {
+        $cliente = $this->buscarClienteInterativo();
+        if (!$cliente) return;
+
+        echo "Tem certeza que deseja excluir o cliente " . $cliente->getNome() . "? (s/n): ";
+        $confirmacao = trim(readline());
+        
+        if (strtolower($confirmacao) === 's') {
+            unset($this->clientes[$cliente->getId()]);
+            echo "Cliente excluído com sucesso.\n";
+        } else {
+            echo "Operação cancelada.\n";
+        }
+    }
+
+    private function excluirRestaurante(): void
+    {
+        $restaurante = $this->buscarRestauranteInterativo();
+        if (!$restaurante) return;
+
+        echo "Tem certeza que deseja excluir o restaurante " . $restaurante->getNome() . "? (s/n): ";
+        $confirmacao = trim(readline());
+        
+        if (strtolower($confirmacao) === 's') {
+            unset($this->restaurantes[$restaurante->getId()]);
+            echo "Restaurante excluído com sucesso.\n";
+        } else {
+            echo "Operação cancelada.\n";
+        }
+    }
+
+    private function excluirEntregador(): void
+    {
+        $entregador = $this->buscarEntregadorInterativo();
+        if (!$entregador) return;
+
+        echo "Tem certeza que deseja excluir o entregador " . $entregador->getNome() . "? (s/n): ";
+        $confirmacao = trim(readline());
+        
+        if (strtolower($confirmacao) === 's') {
+            unset($this->entregadores[$entregador->getId()]);
+            echo "Entregador excluído com sucesso.\n";
+        } else {
+            echo "Operação cancelada.\n";
+        }
+    }
+
+
     private function findClienteById(int $id): ?Cliente
     {
-        foreach ($this->clientes as $cliente) {
-            if ($cliente->getId() === $id) {
-                return $cliente;
-            }
-        }
-        return null;
+        return $this->clientes[$id] ?? null;
     }
 
     private function findRestauranteById(int $id): ?Restaurante
     {
-        foreach ($this->restaurantes as $restaurante) {
-            if ($restaurante->getId() === $id) {
-                return $restaurante;
-            }
-        }
-        return null;
+        return $this->restaurantes[$id] ?? null;
     }
 
     private function findEntregadorById(int $id): ?Entregador
     {
-        foreach ($this->entregadores as $entregador) {
-            if ($entregador->getId() === $id) {
-                return $entregador;
-            }
-        }
-        return null;
+        return $this->entregadores[$id] ?? null;
     }
 
     private function findPedidoById(int $id): ?Pedido

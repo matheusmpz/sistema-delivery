@@ -3,14 +3,16 @@
 namespace App\Entity;
 use App\Entity\Produto;
 
-class Restaurante {
+class Restaurante
+{
     private int $id;
     private string $nome;
     private string $endereco;
     private string $telefone;
-    private array $cardapio; 
+    private array $cardapio;
 
-    public function __construct(int $id, string $nome, string $endereco, string $telefone){
+    public function __construct(int $id, string $nome, string $endereco, string $telefone)
+    {
         $this->id = $id;
         $this->nome = $nome;
         $this->endereco = $endereco;
@@ -18,41 +20,6 @@ class Restaurante {
         $this->cardapio = [];
     }
 
-    function adicionarProduto(Produto $produto) {
-        $this->cardapio[] = $produto;
-    }
-
-    function removerProduto(int $produtoId): void  {
-        foreach($this->cardapio as $produto){
-            if($produto->getId() == $produtoId ){
-                unset($this->cardapio[$produto]);
-                echo "Produto '" . $produto->getNome() . "' removido do cardápio do restaurante '" . $this->nome . "'.\n";
-                return;
-            
-            }
-        }
-        echo "Produto não encontrado!";
-    }     
-
-    public function exibirCardapio(): void
-    {
-        echo "\n--- Cardápio do Restaurante: " . $this->getNome() . " ---\n";
-        foreach ($this->cardapio as $produto) {
-            echo "ID: " . $produto->getId() . " | " . $produto->getNome() . " | R$ " . $produto->getPreco() . "\n";
-        }
-        echo "-----------------------------------------\n";
-    }
-
-    public function getProdutoById(int $produtoId): ?Produto
-    {
-        foreach ($this->cardapio as $produto) {
-            if ($produto->getId() === $produtoId) {
-                return $produto;
-            }
-        }
-        return null;
-    }
-    
     public function getId(): int
     {
         return $this->id;
@@ -76,5 +43,59 @@ class Restaurante {
     public function getCardapio(): array
     {
         return $this->cardapio;
+    }
+
+    public function getProdutoById(int $id): ?Produto
+    {
+        return $this->cardapio[$id] ?? null;
+    }
+
+    public function setNome(string $nome): void
+    {
+        $this->nome = $nome;
+    }
+
+    public function setEndereco(string $endereco): void
+    {
+        $this->endereco = $endereco;
+    }
+
+    public function setTelefone(string $telefone): void
+    {
+        $this->telefone = $telefone;
+    }
+
+    public function adicionarProduto(Produto $produto): void
+    {
+        $this->cardapio[$produto->getId()] = $produto;
+        echo "Produto '{$produto->getNome()}' adicionado ao cardápio de {$this->nome}.\n";
+    }
+
+    public function removerProduto(int $id): void
+    {
+        if (isset($this->cardapio[$id])) {
+            $nomeProduto = $this->cardapio[$id]->getNome();
+            unset($this->cardapio[$id]);
+            echo "Produto '{$nomeProduto}' removido do cardápio de {$this->nome}.\n";
+        } else {
+            echo "ERRO: Produto com ID #{$id} não encontrado no cardápio.\n";
+        }
+    }
+    
+
+    public function exibirCardapio(): void
+    {
+        echo "\n--- Cardápio: {$this->nome} ---\n";
+        if (empty($this->cardapio)) {
+            echo "O cardápio está vazio.\n";
+            return;
+        }
+
+        foreach ($this->cardapio as $produto) {
+            echo "ID: " . $produto->getId() . 
+                 " | Nome: " . $produto->getNome() . 
+                 " | Preço: R$" . number_format($produto->getPreco(), 2, ',', '.') . "\n";
+        }
+        echo "---------------------------\n";
     }
 }
