@@ -401,7 +401,7 @@ class SistemaDelivery
         echo "\n--- Relatório de Restaurantes ---\n";
 
         $relatorio = new Relatorio($this->pedidos);
-        $resultado = $relatorio->gerarRelatorioRestaurantes();
+        $resultado = $relatorio->gerarRelatorioRestaurante();
 
         if (empty($resultado)) {
             echo "Nenhum pedido foi registrado.\n";
