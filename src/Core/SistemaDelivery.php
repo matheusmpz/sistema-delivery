@@ -8,6 +8,7 @@ use App\Entity\Restaurante;
 use App\Entity\Produto;
 use App\Entity\Pedido;
 use App\Entity\ItemPedido;
+use App\Core\Relatorio;
 
 class SistemaDelivery
 {
@@ -82,6 +83,8 @@ class SistemaDelivery
             echo "9. Listar Pedidos\n";
             echo "10. Atribuir Entregador a um Pedido\n";
             echo "11. Finalizar Entrega do Pedido\n";
+            echo "12. Relatório de Restaurantes\n";
+            echo "13. Relatório de Entregadores\n";
             echo "0. Sair\n";
             $opcao = $this->lerInputInt("Escolha uma opção: ");
 
@@ -118,6 +121,12 @@ class SistemaDelivery
                     break;
                 case 11:
                     $this->finalizarEntrega();
+                    break;
+                case 12:
+                    $this->relatorioRestaurantes();
+                    break;
+                case 13:
+                    $this->relatorioEntregadores();
                     break;
                 case 0:
                     echo "Saindo do sistema. Até mais!\n";
@@ -385,6 +394,44 @@ class SistemaDelivery
         $entregadorResponsavel->finalizarEntrega($pedido);
 
         echo "Pedido #" . $pedido->getId() . " entregue com sucesso!\n";
+    }
+
+    private function relatorioRestaurantes(): void
+    {
+        echo "\n--- Relatório de Restaurantes ---\n";
+
+        $relatorio = new Relatorio($this->pedidos);
+        $resultado = $relatorio->gerarRelatorioRestaurantes();
+
+        if (empty($resultado)) {
+            echo "Nenhum pedido foi registrado.\n";
+            return;
+        }
+
+        foreach ($resultado as $rest => $dados) {
+            echo "Restaurante: $rest\n";
+            echo "Total de Pedidos: " . $dados['total_pedidos'] . "\n";
+            echo "Total Arrecadado: R$ " . number_format($dados['total_arrecadado'], 2, ',', '.') . "\n\n";
+        }
+    }
+
+    private function relatorioEntregadores(): void
+    {
+        echo "\n--- Relatório de Entregadores ---\n";
+
+        $relatorio = new Relatorio($this->pedidos);
+        $resultado = $relatorio->gerarRelatorioEntregadores();
+
+        if (empty($resultado)) {
+            echo "Nenhuma entrega finalizada ainda.\n";
+            return;
+        }
+
+        foreach ($resultado as $nome => $dados) {
+            echo "Entregador: $nome\n";
+            echo "Total de Entregas: " . $dados['total_entregas'] . "\n";
+            echo "Valor Recebido: R$ " . number_format($dados['valor_recebido'], 2, ',', '.') . "\n\n";
+        }
     }
 
     private function findClienteById(int $id): ?Cliente
